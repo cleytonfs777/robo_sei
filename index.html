@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criador de Ofícios - SEI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>🔥 Criador de Ofícios SEI</h1>
+                <p>Sistema automatizado de criação de ofícios com IA</p>
+            </div>
+        </header>
+
+        <main>
+            <form id="oficioForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="doc_sei">
+                            <span class="label-icon">📄</span>
+                            Documento SEI
+                        </label>
+                        <input 
+                            type="text" 
+                            id="doc_sei" 
+                            name="doc_sei" 
+                            placeholder="Ex: 126086248"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="processo">
+                            <span class="label-icon">📋</span>
+                            Número do Processo
+                        </label>
+                        <input 
+                            type="text" 
+                            id="processo" 
+                            name="processo" 
+                            placeholder="Ex: 1400.01.0074829/2025-05"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="assunto">
+                            <span class="label-icon">📝</span>
+                            Assunto
+                        </label>
+                        <input 
+                            type="text" 
+                            id="assunto" 
+                            name="assunto" 
+                            placeholder="Ex: Resposta quanto a esclarecimentos adicionais"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="complementar">
+                            <span class="label-icon">💡</span>
+                            Complemento para IA (opcional)
+                            <span class="label-hint">Instruções adicionais para geração da resposta</span>
+                        </label>
+                        <textarea 
+                            id="complementar" 
+                            name="complementar" 
+                            rows="2"
+                            placeholder="Ex: Seja mais formal, mencione a legislação vigente, etc."
+                        ></textarea>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="destinatario">
+                            <span class="label-icon">👤</span>
+                            Destinatário
+                        </label>
+                        <input 
+                            type="text" 
+                            id="destinatario" 
+                            name="destinatario" 
+                            placeholder="Ex: Senhor Ten Cel BM, Resp p/ pelo 5ºCOB"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signatario">
+                            <span class="label-icon">✍️</span>
+                            Signatário
+                        </label>
+                        <input 
+                            type="text" 
+                            id="signatario" 
+                            name="signatario" 
+                            placeholder="Ex: Stella Coeli Flori Maciel"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="graduacao">
+                            <span class="label-icon">🎖️</span>
+                            Graduação
+                        </label>
+                        <input 
+                            type="text" 
+                            id="graduacao" 
+                            name="graduacao" 
+                            placeholder="Ex: Cel BM"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="funcao">
+                            <span class="label-icon">💼</span>
+                            Função
+                        </label>
+                        <input 
+                            type="text" 
+                            id="funcao" 
+                            name="funcao" 
+                            placeholder="Ex: Diretora de Logística e Finanças"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <!-- Seção de Marcação e Atribuição -->
+                <div class="section-header">
+                    <h3>📌 Marcação e Atribuição</h3>
+                    <p class="section-description">Configure a etiqueta e atribuição do processo</p>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label for="etiqueta">
+                            <span class="label-icon">🏷️</span>
+                            Etiqueta
+                        </label>
+                        <select 
+                            id="etiqueta" 
+                            name="etiqueta"
+                            required
+                        >
+                            <option value="Aguardando Despacho Diretor">Aguardando Despacho Diretor</option>
+                            <option value="Aguardando Despacho do Major">Aguardando Despacho do Major</option>
+                            <option value="Aguardando Despacho do SDTS">Aguardando Despacho do SDTS</option>
+                            <option value="Divulgação Geral">Divulgação Geral</option>
+                            <option value="NTS">NTS</option>
+                            <option value="Prioridade - Urgente">Prioridade - Urgente</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="atribuicao">
+                            <span class="label-icon">👥</span>
+                            Atribuir Para
+                        </label>
+                        <select 
+                            id="atribuicao" 
+                            name="atribuicao"
+                            required
+                        >
+                            <option value="Ten Paiva">Ten Paiva</option>
+                            <option value="Maj Vicente">Maj Vicente</option>
+                            <option value="Maj Couto">Maj Couto</option>
+                            <option value="Maj Giovanny" selected>Maj Giovanny</option>
+                            <option value="Cap Linke">Cap Linke</option>
+                            <option value="Cap Alexandre">Cap Alexandre</option>
+                            <option value="Sgt Damásio">Sgt Damásio</option>
+                            <option value="Sgt Sandro">Sgt Sandro</option>
+                            <option value="Ten Cesar Alves">Ten Cesar Alves</option>
+                            <option value="Cel Stella">Cel Stella</option>
+                            <option value="Ten Cel Montezano">Ten Cel Montezano</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="msg">
+                            <span class="label-icon">💬</span>
+                            Mensagem da Anotação
+                            <button type="button" class="btn-helper" id="btnGerarMsg" title="Gerar mensagem automaticamente">
+                                ✨ Gerar Despacho
+                            </button>
+                        </label>
+                        <textarea 
+                            id="msg" 
+                            name="msg" 
+                            rows="3"
+                            placeholder="Digite a mensagem que será adicionada como anotação no processo..."
+                            required
+                        ></textarea>
+                        <span class="char-counter" id="charCounter">0/250 caracteres</span>
+                    </div>
+
+                    <!-- Gerador de Despacho (oculto por padrão) -->
+                    <div id="despachoGenerator" class="despacho-generator hidden">
+                        <h4>📋 Gerador de Despacho</h4>
+                        
+                        <div class="form-group">
+                            <label>Complemento (opcional)</label>
+                            <input type="text" id="complemento" placeholder="Digite o complemento (opcional)">
+                        </div>
+
+                        <div class="form-grid" style="grid-template-columns: auto 1fr auto; align-items: end;">
+                            <div class="form-group">
+                                <label>Artigo</label>
+                                <select id="artigo">
+                                    <option value="o">o</option>
+                                    <option value="a">a</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Nome do Documento</label>
+                                <input type="text" id="nomeDocumento" placeholder="Ex: Ofício nº 123/2025">
+                            </div>
+                            <div class="form-group">
+                                <button type="button" class="btn-add-doc" id="btnAddDoc">+</button>
+                            </div>
+                        </div>
+                        <div id="listaDocumentos" class="lista-docs"></div>
+                        <div id="alertDespacho" class="alert-despacho hidden"></div>
+                        <button type="button" class="btn-gerar" id="btnGerarTexto">✨ Gerar Texto</button>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" id="submitBtn" class="btn btn-primary">
+                        <span class="btn-icon">🚀</span>
+                        Criar Ofício
+                    </button>
+                    <button type="button" id="clearBtn" class="btn btn-secondary">
+                        <span class="btn-icon">🔄</span>
+                        Limpar
+                    </button>
+                </div>
+            </form>
+
+            <div id="statusContainer" class="status-container hidden">
+                <div class="status-header">
+                    <h2>📊 Status do Processo</h2>
+                    <button id="closeStatus" class="close-btn">✕</button>
+                </div>
+                <div id="statusLog" class="status-log"></div>
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill">
+                        <span id="progressText" class="progress-text">0%</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>© 2025 CBMMG - Sistema de Criação Automática de Ofícios</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

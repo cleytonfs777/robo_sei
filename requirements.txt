@@ -1,0 +1,10 @@
+numpy
+pandas
+google-generativeai
+python-dotenv
+selenium
+webdriver-manager
+fastapi
+uvicorn
+httpx
+pydantic
