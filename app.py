@@ -49,6 +49,7 @@ class OficioRequest(BaseModel):
     atribuicao: str = "Maj Rocha"
     # Campo complementar para a IA
     complementar: str = ""
+    has_ticket: bool = False
 
 
 @app.get("/")
@@ -284,6 +285,11 @@ async def construtor_off(request: OficioRequest):
                         if 'Anotação' in link.get_attribute('title') or 'Anotar' in link.get_attribute('title'):
                             navegador.execute_script("arguments[0].click();", link)
                             break
+                        
+            sleep(1)  # Aumentado para headless
+            if request.has_ticket:
+                
+                navegador.execute_script('document.querySelector("#btnAdicionar").click()')
             
             sleep(2)  # Aumentado para headless
             
@@ -405,8 +411,6 @@ async def construtor_off(request: OficioRequest):
             
             # ============= FIM DA MARCAÇÃO =============
             
-            #fechar o navegador
-            navegador.quit()
             
         except Exception as e:
             yield gerar_status(f"❌ ERRO: {str(e)}", "error")

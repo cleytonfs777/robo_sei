@@ -344,7 +344,8 @@ async function handleSubmit(e) {
         atribuicao: document.getElementById('atribuicao').value,
         msg: document.getElementById('msg').value,
         ofreferencia: document.getElementById('ofreferencia').value,
-        complementar: document.getElementById('complementar').value || ""
+        complementar: document.getElementById('complementar').value || "",
+        has_ticket: document.getElementById('has_ticket').value === "sim"
     };
     
     // Validar tamanho da mensagem
