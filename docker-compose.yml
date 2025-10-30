@@ -1,0 +1,44 @@
+services:
+  creator-oficio:
+    build:
+      context: .
+      args:
+        - HTTP_PROXY=http://proxy.prodemge.gov.br:8080
+        - HTTPS_PROXY=http://proxy.prodemge.gov.br:8080
+        - NO_PROXY=localhost,127.0.0.1
+    container_name: creator_oficio_app
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mapear o código para desenvolvimento com hot-reload
+      - .:/app
+      # Evitar conflitos com node_modules e __pycache__
+      - /app/__pycache__
+    environment:
+      # Variáveis de ambiente do .env
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - USER=${USER}
+      - PASSWORD=${PASSWORD}
+      - ORGAO=${ORGAO}
+      # Configurações de Proxy PRODEMGE
+      - HTTP_PROXY=http://proxy.prodemge.gov.br:8080
+      - HTTPS_PROXY=http://proxy.prodemge.gov.br:8080
+      - http_proxy=http://proxy.prodemge.gov.br:8080
+      - https_proxy=http://proxy.prodemge.gov.br:8080
+      - NO_PROXY=localhost,127.0.0.1
+      - no_proxy=localhost,127.0.0.1
+      # Configurações para Selenium headless
+      - DISPLAY=:99
+    env_file:
+      - .env
+    restart: unless-stopped
+    networks:
+      - creator-network
+    # Configurações para melhor performance do Chrome em container
+    shm_size: '2gb'
+    cap_add:
+      - SYS_ADMIN
+
+networks:
+  creator-network:
+    driver: bridge

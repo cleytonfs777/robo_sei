@@ -141,6 +141,12 @@ textarea:focus {
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
+input[readonly] {
+    background-color: #f0f0f0;
+    cursor: not-allowed;
+    color: #666;
+}
+
 input::placeholder,
 textarea::placeholder {
     color: var(--text-light);

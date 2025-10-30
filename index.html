@@ -45,6 +45,19 @@
                             required
                         >
                     </div>
+                    <div class="form-group">
+                        <label for="processo">
+                            <span class="label-icon">🔍</span>
+                            Ofício de Referência
+                        </label>
+                        <input 
+                            type="text" 
+                            id="ofreferencia" 
+                            name="ofreferencia" 
+                            placeholder="Ex: Ofício 388 (126102548)"
+                            required
+                        >
+                    </div>
 
                     <div class="form-group full-width">
                         <label for="assunto">
@@ -93,13 +106,13 @@
                             <span class="label-icon">✍️</span>
                             Signatário
                         </label>
-                        <input 
-                            type="text" 
+                        <select 
                             id="signatario" 
-                            name="signatario" 
-                            placeholder="Ex: Stella Coeli Flori Maciel"
+                            name="signatario"
                             required
                         >
+                            <option value="">Selecione o signatário...</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
@@ -112,6 +125,7 @@
                             id="graduacao" 
                             name="graduacao" 
                             placeholder="Ex: Cel BM"
+                            readonly
                             required
                         >
                     </div>
@@ -126,6 +140,7 @@
                             id="funcao" 
                             name="funcao" 
                             placeholder="Ex: Diretora de Logística e Finanças"
+                            readonly
                             required
                         >
                     </div>
@@ -167,17 +182,18 @@
                             name="atribuicao"
                             required
                         >
-                            <option value="Ten Paiva">Ten Paiva</option>
-                            <option value="Maj Vicente">Maj Vicente</option>
-                            <option value="Maj Couto">Maj Couto</option>
-                            <option value="Maj Giovanny" selected>Maj Giovanny</option>
-                            <option value="Cap Linke">Cap Linke</option>
-                            <option value="Cap Alexandre">Cap Alexandre</option>
-                            <option value="Sgt Damásio">Sgt Damásio</option>
-                            <option value="Sgt Sandro">Sgt Sandro</option>
-                            <option value="Ten Cesar Alves">Ten Cesar Alves</option>
-                            <option value="Cel Stella">Cel Stella</option>
-                            <option value="Ten Cel Montezano">Ten Cel Montezano</option>
+                        <option value="Cel Stella">Cel Stella</option>
+                        <option value="Ten Cel Montezano">Ten Cel Montezano</option>
+                        <option value="Maj Vicente">Maj Vicente</option>
+                        <option value="Maj Rocha">Maj Rocha</option>
+                        <option value="Maj Couto">Maj Couto</option>
+                        <option value="Maj Giovanny" selected>Maj Giovanny</option>
+                        <option value="Cap Linke">Cap Linke</option>
+                        <option value="Cap Alexandre">Cap Alexandre</option>
+                        <option value="Sgt Damásio">Sgt Damásio</option>
+                        <option value="Sgt Sandro">Sgt Sandro</option>
+                        <option value="Ten Cesar Alves">Ten Cesar Alves</option>
+                        <option value="Ten Paiva">Ten Paiva</option>
                         </select>
                     </div>
 
@@ -261,6 +277,41 @@
         </footer>
     </div>
 
+    <script>
+        // Carregar dados dos militares e popular o select de signatário
+        let dadosMilitares = {};
+        
+        fetch('/dadosmil.json')
+            .then(response => response.json())
+            .then(data => {
+                dadosMilitares = data;
+                const signatarioSelect = document.getElementById('signatario');
+                
+                // Popular o select com os nomes dos militares
+                Object.entries(data).forEach(([cpf, dados]) => {
+                    const option = document.createElement('option');
+                    option.value = cpf;
+                    option.textContent = dados[0]; // Nome completo (posição 0)
+                    signatarioSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Erro ao carregar dados dos militares:', error));
+        
+        // Evento de mudança do signatário
+        document.getElementById('signatario').addEventListener('change', function() {
+            const cpf = this.value;
+            if (cpf && dadosMilitares[cpf]) {
+                const dados = dadosMilitares[cpf];
+                // Posição 5 = Graduação (índice 5)
+                document.getElementById('graduacao').value = dados[5] || '';
+                // Posição 6 = Função (índice 6)
+                document.getElementById('funcao').value = dados[6] || '';
+            } else {
+                document.getElementById('graduacao').value = '';
+                document.getElementById('funcao').value = '';
+            }
+        });
+    </script>
     <script src="script.js"></script>
 </body>
 </html>

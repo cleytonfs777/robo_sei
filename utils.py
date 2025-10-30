@@ -1,4 +1,9 @@
-def cria_oficio(assunto: str, destinatario: str, signatario: str, graduacao: str, funcao: str, paragrafos: list) -> str:
+def cria_oficio(assunto: str, destinatario: str, signatario: str, graduacao: str, funcao: str, paragrafos: list, ofreferencia: str, is_upper=True) -> str:
+    
+    if is_upper:
+        signatario = signatario.upper()
+        graduacao = graduacao.upper()
+        funcao = funcao.upper()
     
     lista_principal = ''
     for i in paragrafos:
@@ -6,6 +11,8 @@ def cria_oficio(assunto: str, destinatario: str, signatario: str, graduacao: str
     conteudo_oficio = f"""
     <body>
         <p class="Texto_Alinhado_Esquerda"><strong>Assunto: {assunto}</strong></p>
+        <p class="Texto_Alinhado_Esquerda"><strong>Referencia: {ofreferencia}</strong></p>
+        <p class="Texto_Justificado_Recuo_Primeira_Linha">&nbsp;</p>
         <p class="Texto_Justificado_Recuo_Primeira_Linha"><strong>{destinatario},</strong></p>
         <p class="Texto_Justificado_Recuo_Primeira_Linha">&nbsp;</p>
         {lista_principal}

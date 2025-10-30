@@ -84,9 +84,12 @@ def etiqueta():
 
 
 def tranform_text_atribuicao(text):
+    # Retirar espaços em text
+    text = text.strip()
     with open('dadosmil.json', encoding='utf-8') as json_file:
         dados = json.load(json_file)
 
         for chave, valor in dados.items():
             if valor[1] == text:
+                print(f"Dado para atribuição: {chave} - {valor[0]}")
                 return f"{chave} - {valor[0]}"

@@ -321,17 +321,29 @@ async function handleSubmit(e) {
     clearStatusLog();
     
     // Coletar dados do formulário
+    const signatarioSelect = document.getElementById('signatario');
+    
+    // Validar se um signatário foi selecionado
+    if (!signatarioSelect.value || signatarioSelect.value === "") {
+        addStatusMessage('error', 'Por favor, selecione um signatário!');
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('loading');
+        submitBtn.innerHTML = '<span class="btn-icon">🚀</span> Criar Ofício';
+        return;
+    }
+    
     const formData = {
         doc_sei: document.getElementById('doc_sei').value,
         processo: document.getElementById('processo').value,
         assunto: document.getElementById('assunto').value,
         destinatario: document.getElementById('destinatario').value,
-        signatario: document.getElementById('signatario').value,
+        signatario: signatarioSelect.options[signatarioSelect.selectedIndex].text,
         graduacao: document.getElementById('graduacao').value,
         funcao: document.getElementById('funcao').value,
         etiqueta: document.getElementById('etiqueta').value,
         atribuicao: document.getElementById('atribuicao').value,
         msg: document.getElementById('msg').value,
+        ofreferencia: document.getElementById('ofreferencia').value,
         complementar: document.getElementById('complementar').value || ""
     };
     

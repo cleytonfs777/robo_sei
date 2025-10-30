@@ -45,7 +45,8 @@ class OficioRequest(BaseModel):
     # Campos do marcador
     etiqueta: str = "Aguardando Despacho do Major"
     msg: str = ""
-    atribuicao: str = "Maj Giovanny"
+    ofreferencia: str = ""
+    atribuicao: str = "Maj Rocha"
     # Campo complementar para a IA
     complementar: str = ""
 
@@ -65,6 +66,10 @@ def get_css():
 @app.get("/script.js")
 def get_js():
     return FileResponse("script.js")
+
+@app.get("/dadosmil.json")
+def get_dadosmil():
+    return FileResponse("dadosmil.json")
 
 def gerar_status(mensagem: str, tipo: str = "info", progresso: int = None):
     """Função auxiliar para gerar mensagens de status"""
@@ -149,7 +154,7 @@ async def construtor_off(request: OficioRequest):
             yield gerar_status("Criando ofício...", "info", 55)
 
             # criar o oficio
-            conteudo_oficio = cria_oficio(request.assunto, request.destinatario, request.signatario, request.graduacao, request.funcao, resposta_ia)
+            conteudo_oficio = cria_oficio(request.assunto, request.destinatario, request.signatario, request.graduacao, request.funcao, resposta_ia, request.ofreferencia)
 
             yield gerar_status("Mudando para frame padrão...", "info", 60)
             
