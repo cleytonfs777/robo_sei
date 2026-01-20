@@ -3,62 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Criador de Ofícios - SEI</title>
+    <title>SDTS-3 Tools</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <header>
+    <!-- Sidebar Menu -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <span class="logo-icon">🛠️</span>
+                <h2>SDTS-3 Tools</h2>
+            </div>
+            <button class="sidebar-toggle" id="sidebarToggle" title="Recolher menu">
+                <span class="toggle-icon">☰</span>
+            </button>
+        </div>
+        <nav class="sidebar-nav">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" data-module="criador-oficio">
+                        <span class="nav-icon">📄</span>
+                        <span class="nav-text">Criador de Ofício</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-module="gerador-trello">
+                        <span class="nav-icon">📋</span>
+                        <span class="nav-text">Gerador de Trello</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <p>v1.0.0</p>
+            <p>© 2025 CBMMG</p>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper" id="mainWrapper">
+        <!-- Top Header Bar -->
+        <header class="top-header">
+            <button class="menu-toggle" id="menuToggle" title="Abrir menu">
+                <span>☰</span>
+            </button>
             <div class="header-content">
-                <h1>🔥 Criador de Ofícios SEI</h1>
-                <p>Sistema automatizado de criação de ofícios com IA</p>
+                <h1 id="moduleTitle">🔥 Criador de Ofícios SEI</h1>
+                <p id="moduleDescription">Sistema automatizado de criação de ofícios com IA</p>
             </div>
         </header>
 
-        <main>
-            <form id="oficioForm">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="doc_sei">
-                            <span class="label-icon">📄</span>
-                            Documento SEI
-                        </label>
-                        <input 
-                            type="text" 
-                            id="doc_sei" 
-                            name="doc_sei" 
-                            placeholder="Ex: 126086248"
+        <!-- Module: Criador de Ofício -->
+        <div class="module-container" id="module-criador-oficio">
+            <div class="container">
+                <main>
+                    <div class="tipo-selector">
+                        <select 
+                            id="tipo_doc" 
+                            name="tipo_doc"
                             required
+                            class="tipo-select"
                         >
+                            <option value="" selected disabled>Selecione o tipo...</option>
+                            <option value="NTS">Criador</option>
+                            <option value="NTS">Resposta</option>
+                        </select>
                     </div>
-
-                    <div class="form-group">
-                        <label for="processo">
-                            <span class="label-icon">📋</span>
-                            Número do Processo
-                        </label>
-                        <input 
-                            type="text" 
-                            id="processo" 
-                            name="processo" 
-                            placeholder="Ex: 1400.01.0074829/2025-05"
-                            required
-                        >
-                    </div>
-                    <div class="form-group">
-                        <label for="processo">
-                            <span class="label-icon">🔍</span>
-                            Ofício de Referência
-                        </label>
-                        <input 
-                            type="text" 
-                            id="ofreferencia" 
-                            name="ofreferencia" 
-                            placeholder="Ex: Ofício 388 (126102548)"
-                            required
-                        >
-                    </div>
-
+                    
+                    <form id="oficioForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="doc_sei">
+                                <span class="label-icon">📄</span>
+                                Documento SEI
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="doc_sei" 
+                                    name="doc_sei" 
+                                    placeholder="Ex: 126086248"
+                                    required
+                                >
+                            </div>
+                        <div class="form-group">
+                            <label for="processo">
+                                <span class="label-icon">📋</span>
+                                Número do Processo
+                            </label>
+                            <input 
+                                type="text" 
+                                id="processo" 
+                                name="processo" 
+                                placeholder="Ex: 1400.01.0074829/2025-05"
+                                required
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label for="processo">
+                                <span class="label-icon">🔍</span>
+                                Ofício de Referência
+                            </label>
+                            <input 
+                                type="text" 
+                                id="ofreferencia" 
+                                name="ofreferencia" 
+                                placeholder="Ex: Ofício 388 (126102548)"
+                                required
+                            >
+                        </div>
                     <div class="form-group full-width">
                         <label for="assunto">
                             <span class="label-icon">📝</span>
@@ -140,8 +192,9 @@
                             name="has_ticket"
                             required
                         >
+                            <option value="" disabled selected>Selecione uma opção...</option>
                             <option value="sim">Sim</option>
-                            <option value="nao" selected>Não</option>
+                            <option value="nao">Não</option>
                         </select>
                     </div>
 
@@ -179,7 +232,7 @@
                             required
                         >
                             <option value="Aguardando Despacho Diretor">Aguardando Despacho Diretor</option>
-                            <option value="Aguardando Despacho do Major">Aguardando Despacho do Major</option>
+                            <option value="Aguardando Despacho do Major" selected>Aguardando Despacho do Major</option>
                             <option value="Aguardando Despacho do SDTS">Aguardando Despacho do SDTS</option>
                             <option value="Divulgação Geral">Divulgação Geral</option>
                             <option value="NTS">NTS</option>
@@ -200,9 +253,9 @@
                         <option value="Cel Stella">Cel Stella</option>
                         <option value="Ten Cel Montezano">Ten Cel Montezano</option>
                         <option value="Maj Vicente">Maj Vicente</option>
-                        <option value="Maj Rocha">Maj Rocha</option>
+                        <option value="Maj Rocha" selected>Maj Rocha</option>
                         <option value="Maj Couto">Maj Couto</option>
-                        <option value="Maj Giovanny" selected>Maj Giovanny</option>
+                        <option value="Maj Giovanny">Maj Giovanny</option>
                         <option value="Cap Linke">Cap Linke</option>
                         <option value="Cap Alexandre">Cap Alexandre</option>
                         <option value="Sgt Damásio">Sgt Damásio</option>
@@ -261,34 +314,224 @@
                     </div>
                 </div>
 
-                <div class="button-group">
-                    <button type="submit" id="submitBtn" class="btn btn-primary">
-                        <span class="btn-icon">🚀</span>
-                        Criar Ofício
-                    </button>
-                    <button type="button" id="clearBtn" class="btn btn-secondary">
-                        <span class="btn-icon">🔄</span>
-                        Limpar
-                    </button>
-                </div>
-            </form>
+                        <div class="button-group">
+                            <button type="submit" id="submitBtn" class="btn btn-primary">
+                                <span class="btn-icon">🚀</span>
+                                Criar Ofício
+                            </button>
+                            <button type="button" id="clearBtn" class="btn btn-secondary">
+                                <span class="btn-icon">🔄</span>
+                                Limpar
+                            </button>
+                            <button type="button" id="planBtn" class="btn btn-warning" onclick="window.open('https://docs.google.com/spreadsheets/d/1Le3Wzd1_4yHWCTtgHJeAEN8Qm82EkeT8TJGH_AoM8ho/edit?usp=sharing', '_blank')">
+                                <span class="btn-icon">📊</span>
+                                Planilha
+                            </button>
+                        </div>
+                    </form>
 
-            <div id="statusContainer" class="status-container hidden">
-                <div class="status-header">
-                    <h2>📊 Status do Processo</h2>
-                    <button id="closeStatus" class="close-btn">✕</button>
+                    <div id="statusContainer" class="status-container hidden">
+                        <div class="status-header">
+                            <h2>📊 Status do Processo</h2>
+                            <button id="closeStatus" class="close-btn">✕</button>
+                        </div>
+                        <div id="statusLog" class="status-log"></div>
+                        <div class="progress-bar">
+                            <div id="progressFill" class="progress-fill">
+                                <span id="progressText" class="progress-text">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <!-- End Module: Criador de Ofício -->
+
+        <!-- Module: Gerador de Trello -->
+        <div class="module-container hidden" id="module-gerador-trello">
+            <div class="container">
+                <main>
+                    <form id="trelloForm">
+                        <!-- Board e Label -->
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="board_name">
+                                    <span class="label-icon">📋</span>
+                                    Nome do Board
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="board_name" 
+                                    name="board_name" 
+                                    placeholder="Ex: SDTS-3 - Projetos 2025"
+                                    value="Desenvolvimento de Sistemas"
+                                    required
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="label_select">
+                                    <span class="label-icon">🏷️</span>
+                                    Label
+                                    <button type="button" class="btn-helper" id="btnManageLabels" title="Gerenciar labels">
+                                        ⚙️ Gerenciar
+                                    </button>
+                                </label>
+                                <select 
+                                    id="label_select" 
+                                    name="label_select"
+                                    required
+                                >
+                                    <option value="">Selecione um label...</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Título -->
+                        <div class="form-group full-width">
+                            <label for="card_title">
+                                <span class="label-icon">📌</span>
+                                Título do Card
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="auto_title" name="auto_title">
+                                    <span>Gerar automaticamente com IA</span>
+                                </label>
+                            </label>
+                            <input 
+                                type="text" 
+                                id="card_title" 
+                                name="card_title" 
+                                placeholder="Ex: Sistema de Controle de Protocolos"
+                            >
+                        </div>
+
+                        <!-- Descrição -->
+                        <div class="form-group full-width">
+                            <label for="card_description">
+                                <span class="label-icon">📝</span>
+                                Descrição
+                                <span class="label-hint">Será formatada automaticamente pela IA</span>
+                            </label>
+                            <textarea 
+                                id="card_description" 
+                                name="card_description" 
+                                rows="8"
+                                placeholder="Descreva o projeto, funcionalidades, objetivos, etc. A IA irá estruturar e detalhar automaticamente..."
+                                required
+                            ></textarea>
+                        </div>
+
+                        <!-- List e Data -->
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="list_name">
+                                    <span class="label-icon">📑</span>
+                                    Nome da Lista
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="list_name" 
+                                    name="list_name" 
+                                    placeholder="Ex: Backlog, Em Desenvolvimento, Concluído"
+                                    value="Em desenvolvimento"
+                                    required
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="due_date">
+                                    <span class="label-icon">📅</span>
+                                    Data de Vencimento (opcional)
+                                </label>
+                                <input 
+                                    type="date" 
+                                    id="due_date" 
+                                    name="due_date"
+                                >
+                            </div>
+                        </div>
+
+                        <div class="button-group">
+                            <button type="submit" id="submitTrelloBtn" class="btn btn-primary">
+                                <span class="btn-icon">🚀</span>
+                                Criar Card no Trello
+                            </button>
+                            <button type="button" id="clearTrelloBtn" class="btn btn-secondary">
+                                <span class="btn-icon">🔄</span>
+                                Limpar
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Status Container -->
+                    <div id="trelloStatusContainer" class="status-container hidden">
+                        <div class="status-header">
+                            <h2>📊 Status da Criação</h2>
+                            <button id="closeTrelloStatus" class="close-btn">✕</button>
+                        </div>
+                        <div id="trelloStatusLog" class="status-log"></div>
+                        <div class="progress-bar">
+                            <div id="trelloProgressFill" class="progress-fill">
+                                <span id="trelloProgressText" class="progress-text">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <!-- End Module: Gerador de Trello -->
+
+        <!-- Modal: Gerenciar Labels -->
+        <div class="modal" id="labelModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>🏷️ Gerenciar Labels</h2>
+                    <button class="close-btn" id="closeLabelModal">✕</button>
                 </div>
-                <div id="statusLog" class="status-log"></div>
-                <div class="progress-bar">
-                    <div id="progressFill" class="progress-fill">
-                        <span id="progressText" class="progress-text">0%</span>
+                <div class="modal-body">
+                    <div class="label-form">
+                        <h3>Adicionar Novo Label</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="new_label_name">Nome do Label</label>
+                                <input 
+                                    type="text" 
+                                    id="new_label_name" 
+                                    placeholder="Ex: Urgente"
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="new_label_color">Cor</label>
+                                <select id="new_label_color">
+                                    <option value="red">🔴 Vermelho</option>
+                                    <option value="orange">🟠 Laranja</option>
+                                    <option value="yellow">🟡 Amarelo</option>
+                                    <option value="green">🟢 Verde</option>
+                                    <option value="blue">🔵 Azul</option>
+                                    <option value="purple">🟣 Roxo</option>
+                                    <option value="pink">🩷 Rosa</option>
+                                    <option value="sky">🔷 Azul Claro</option>
+                                    <option value="lime">🟩 Verde Limão</option>
+                                    <option value="black">⚫ Preto</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-primary" id="addLabelBtn">
+                            <span class="btn-icon">➕</span>
+                            Adicionar Label
+                        </button>
+                    </div>
+
+                    <div class="labels-list">
+                        <h3>Labels Cadastrados</h3>
+                        <div id="labelsList"></div>
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
 
-        <footer>
-            <p>© 2025 CBMMG - Sistema de Criação Automática de Ofícios</p>
+        <footer class="main-footer">
+            <p>© 2025 CBMMG - SDTS-3 Tools</p>
         </footer>
     </div>
 
@@ -306,6 +549,10 @@
                 Object.entries(data).forEach(([cpf, dados]) => {
                     const option = document.createElement('option');
                     option.value = cpf;
+                    // Se o cpf for igual a 04962692674 deve ser marcado como selected
+                    if (cpf === '04962692674') {
+                        option.selected = true;
+                    }
                     option.textContent = dados[0]; // Nome completo (posição 0)
                     signatarioSelect.appendChild(option);
                 });
@@ -326,7 +573,90 @@
                 document.getElementById('funcao').value = '';
             }
         });
+
+        // ============= SIDEBAR NAVIGATION =============
+        const sidebar = document.getElementById('sidebar');
+        const mainWrapper = document.getElementById('mainWrapper');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.querySelectorAll('.nav-link:not(.disabled)');
+        const moduleTitle = document.getElementById('moduleTitle');
+        const moduleDescription = document.getElementById('moduleDescription');
+
+        // Module configurations
+        const moduleConfigs = {
+            'criador-oficio': {
+                title: '🔥 Criador de Ofícios SEI',
+                description: 'Sistema automatizado de criação de ofícios com IA'
+            },
+            'gerador-trello': {
+                title: '📋 Gerador de Trello',
+                description: 'Geração automática de cards do Trello'
+            }
+        };
+
+        // Toggle sidebar
+        function toggleSidebar() {
+            sidebar.classList.toggle('collapsed');
+            mainWrapper.classList.toggle('expanded');
+        }
+
+        // Toggle sidebar on mobile
+        function toggleMobileSidebar() {
+            sidebar.classList.toggle('mobile-open');
+        }
+
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', toggleSidebar);
+        }
+
+        if (menuToggle) {
+            menuToggle.addEventListener('click', toggleMobileSidebar);
+        }
+
+        // Switch between modules
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const moduleName = this.getAttribute('data-module');
+                
+                // Update active state
+                navLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Hide all modules
+                document.querySelectorAll('.module-container').forEach(m => {
+                    m.classList.add('hidden');
+                });
+                
+                // Show selected module
+                const moduleElement = document.getElementById('module-' + moduleName);
+                if (moduleElement) {
+                    moduleElement.classList.remove('hidden');
+                }
+                
+                // Update header
+                if (moduleConfigs[moduleName]) {
+                    moduleTitle.textContent = moduleConfigs[moduleName].title;
+                    moduleDescription.textContent = moduleConfigs[moduleName].description;
+                }
+                
+                // Close mobile sidebar
+                sidebar.classList.remove('mobile-open');
+            });
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768) {
+                if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
+                    sidebar.classList.remove('mobile-open');
+                }
+            }
+        });
     </script>
     <script src="script.js"></script>
+    <script src="trello.js"></script>
 </body>
 </html>

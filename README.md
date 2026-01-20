@@ -1,15 +1,38 @@
-# 🔥 Criador de Ofícios SEI - Sistema Automatizado
+# �️ SDTS-3 Tools - Sistema de Ferramentas Integradas
 
-Sistema moderno de criação automática de ofícios no SEI com inteligência artificial.
+Sistema modular de ferramentas para automação de processos administrativos do CBMMG.
 
-## 📋 Funcionalidades
+## 📦 Módulos
 
-- ✅ Interface web moderna e responsiva
-- ✅ Integração com Google Generative AI (Gemini)
-- ✅ Automação completa do processo no SEI
-- ✅ Feedback em tempo real do progresso
-- ✅ Suporte a proxy corporativo
-- ✅ Geração automática de respostas com IA
+### 🔥 Criador de Ofícios SEI
+Sistema automatizado de criação de ofícios no SEI com inteligência artificial.
+- Interface web moderna e responsiva
+- Integração com Google Generative AI (Gemini)
+- Automação completa do processo no SEI
+- Feedback em tempo real do progresso
+- Suporte a proxy corporativo
+- Geração automática de respostas com IA
+
+### 📋 Gerador de Trello
+Módulo para geração automática de cards do Trello com formatação inteligente via IA.
+
+**Funcionalidades:**
+- 🏷️ Sistema de gerenciamento de labels (criar, editar, excluir)
+- 🤖 Geração automática de títulos com IA
+- 📝 Formatação automática de descrições seguindo padrão de Product Owner
+- 🎯 Estruturação completa do card (visão geral, objetivos, arquitetura, etc.)
+- 📅 Suporte a datas de vencimento
+- 💾 Armazenamento local dos labels configurados
+- 🎨 10 cores de labels disponíveis
+
+**Status:** ✅ Funcional (integração com API do Trello pendente)
+
+## 📋 Funcionalidades Gerais
+
+- ✅ Interface com menu lateral navegável
+- ✅ Suporte a múltiplos módulos
+- ✅ Design responsivo (mobile-friendly)
+- ✅ Integração com APIs externas
 
 ## 🚀 Como Usar
 
@@ -31,7 +54,16 @@ ORGAO=seu_orgao
 
 # API Key do Google Generative AI
 GOOGLE_API_KEY=sua_chave_api_google
+
+# API do Trello (opcional - para módulo Trello)
+TRELLO_API_KEY=sua_chave_api_trello
+TRELLO_TOKEN=seu_token_trello
 ```
+
+**Como obter credenciais do Trello:**
+1. Acesse: https://trello.com/power-ups/admin
+2. Crie um novo Power-Up para obter sua API Key
+3. Gere um token de acesso com as permissões necessárias
 
 ### 3. Iniciar o Servidor
 

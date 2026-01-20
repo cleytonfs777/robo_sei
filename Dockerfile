@@ -15,17 +15,18 @@ ENV NO_PROXY=${NO_PROXY}
 ENV no_proxy=${NO_PROXY}
 
 # Instalar dependências do sistema para Chrome e Selenium
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --fix-missing \
     wget \
     gnupg \
     unzip \
     curl \
     ca-certificates \
-    && wget -q -O /tmp/google-signing-key.pub https://dl.google.com/linux/linux_signing_key.pub \
-    && gpg --dearmor -o /usr/share/keyrings/google-chrome-keyring.gpg /tmp/google-signing-key.pub \
-    && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
-    && apt-get update \
-    && apt-get install -y google-chrome-stable \
+    || true \
+    && wget -q -O /tmp/google-signing-key.pub https://dl.google.com/linux/linux_signing_key.pub || true \
+    && gpg --dearmor -o /usr/share/keyrings/google-chrome-keyring.gpg /tmp/google-signing-key.pub || true \
+    && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list || true \
+    && apt-get update || true \
+    && apt-get install -y --fix-missing google-chrome-stable || true \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/google-signing-key.pub
 

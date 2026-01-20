@@ -1,7 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, FileResponse
 from pydantic import BaseModel
+from typing import Optional
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
@@ -13,6 +14,7 @@ from selenium.webdriver.common.by import By
 from time import sleep
 import os
 import json
+import requests
 from ai_converter import make_response
 from buscaoficio import busca_conteudo_oficio
 from handle_listas import tranform_text_atribuicao
@@ -88,7 +90,7 @@ async def construtor_off(request: OficioRequest):
             
             # Definição de Variaveis
             options = webdriver.ChromeOptions()
-            options.add_argument('--headless=new')
+            # options.add_argument('--headless=new')
             
             # Argumentos adicionais para headless funcionar melhor
             options.add_argument('--no-sandbox')
@@ -270,21 +272,35 @@ async def construtor_off(request: OficioRequest):
             
             # Clicar em adicionar anotação - tentar diferentes métodos
             try:
-                # Método 1: Aguardar e clicar via JavaScript
-                wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="divArvoreAcoes"]/a[22]')))
-                navegador.execute_script('document.querySelector("#divArvoreAcoes > a:nth-child(22)").click()')
+                # Método 1: Procurar link com texto contendo "marcador_gerenciar"
+                links = navegador.find_elements(By.CSS_SELECTOR, '#divArvoreAcoes a')
+                link_encontrado = False
+                for link in links:
+                    href = link.get_attribute('href') or ''
+                    if 'marcador_gerenciar' in href:
+                        navegador.execute_script("arguments[0].click();", link)
+                        link_encontrado = True
+                        break
+                
+                if not link_encontrado:
+                    raise Exception("Link marcador_gerenciar não encontrado")
             except:
-                # Método 2: Clicar diretamente no elemento
                 try:
-                    btn_anotacao = navegador.find_element(By.XPATH, '//*[@id="divArvoreAcoes"]/a[22]')
-                    navegador.execute_script("arguments[0].click();", btn_anotacao)
+                    # Método 2: Aguardar e clicar via JavaScript
+                    wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="divArvoreAcoes"]/a[24]')))
+                    navegador.execute_script('document.querySelector("#divArvoreAcoes > a:nth-child(24)").click()')
                 except:
-                    # Método 3: Link pelo texto
-                    links = navegador.find_elements(By.CSS_SELECTOR, '#divArvoreAcoes a')
-                    for link in links:
-                        if 'Anotação' in link.get_attribute('title') or 'Anotar' in link.get_attribute('title'):
-                            navegador.execute_script("arguments[0].click();", link)
-                            break
+                    # Método 3: Clicar diretamente no elemento
+                    try:
+                        btn_anotacao = navegador.find_element(By.XPATH, '//*[@id="divArvoreAcoes"]/a[24]')
+                        navegador.execute_script("arguments[0].click();", btn_anotacao)
+                    except:
+                        # Método 4: Link pelo texto/título
+                        links = navegador.find_elements(By.CSS_SELECTOR, '#divArvoreAcoes a')
+                        for link in links:
+                            if 'Anotação' in link.get_attribute('title') or 'Anotar' in link.get_attribute('title'):
+                                navegador.execute_script("arguments[0].click();", link)
+                                break
                         
             sleep(1)  # Aumentado para headless
             if request.has_ticket:
@@ -420,6 +436,317 @@ async def construtor_off(request: OficioRequest):
                 pass
     
     return StreamingResponse(gerar_resposta(), media_type="application/x-ndjson")
+
+
+# ============================================
+# TRELLO MODULE
+# ============================================
+
+class TrelloCardRequest(BaseModel):
+    board_name: str
+    label_name: str
+    label_color: str
+    auto_title: bool
+    card_title: str = ""
+    card_description: str
+    list_name: str
+    due_date: Optional[str] = None
+    use_ai: bool = True  # Sempre usar IA por padrão
+
+
+@app.get("/trello.js")
+def get_trello_js():
+    return FileResponse("trello.js")
+
+
+@app.post("/criar-card-trello")
+async def criar_card_trello(request: Request):
+    """
+    Endpoint para criar um card no Trello com formatação via IA
+    """
+    import requests
+    
+    # Log do payload raw para debug
+    try:
+        body = await request.json()
+        print("\n=== DEBUG: Payload RAW recebido ===")
+        print(json.dumps(body, indent=2))
+    except Exception as e:
+        print(f"\n=== DEBUG: Erro ao ler payload: {e} ===")
+        return {
+            "success": False,
+            "error": f"Erro ao processar payload: {str(e)}"
+        }
+    
+    # Validar payload com Pydantic
+    try:
+        validated_request = TrelloCardRequest(**body)
+    except Exception as e:
+        print(f"\n=== DEBUG: Erro de validação Pydantic ===")
+        print(f"Erro: {str(e)}")
+        return {
+            "success": False,
+            "error": f"Dados inválidos: {str(e)}"
+        }
+    
+    print("\n=== DEBUG: Iniciando criar_card_trello ===")
+    print(f"use_ai: {validated_request.use_ai}")
+    print(f"auto_title: {validated_request.auto_title}")
+    print(f"card_title: {validated_request.card_title}")
+    print(f"card_description: {validated_request.card_description}")
+    
+    # Credenciais do Trello
+    TRELLO_API_KEY = os.getenv('API_KEY')
+    TRELLO_TOKEN = os.getenv('TOKEN')
+    TRELLO_BASE_URL = "https://api.trello.com/1"
+    
+    def get_trello_auth():
+        return {'key': TRELLO_API_KEY, 'token': TRELLO_TOKEN}
+    
+    try:
+        card_title = validated_request.card_title
+        card_desc = validated_request.card_description
+        
+        # Se use_ai estiver ativo, processar com OpenAI
+        if validated_request.use_ai:
+            print("\n=== DEBUG: use_ai está ATIVO, processando com OpenAI ===")
+            
+            import openai
+            
+            # Configurar cliente OpenAI
+            client = openai.Client()
+            
+            # Prompt para formatação da descrição
+            prompt_descricao = f"""Você é um Product Owner + Arquiteto de Software do CBMMG e sua tarefa é transformar uma única entrada chamada {{DESCRICAO}} em um CARD de Trello completo, didático e tecnicamente detalhado, escrito em português do Brasil.
+
+REGRAS IMPORTANTES
+1) Você receberá SOMENTE {{DESCRICAO}}. Não faça perguntas de volta.
+2) Você deve inferir e completar o que faltar com suposições plausíveis, mas deixe claro quando algo for suposição usando o marcador: "⚠️ Suposição:".
+3) O resultado deve vir em formato único, pronto para colar no Trello, com:
+   - Linha 1: "Título: <...>"
+   - Em seguida: "Descrição:" e o corpo completo.
+4) Não use tabelas. Use seções e listas curtas, com emojis discretos (no máximo 1 por seção).
+5) Deve ficar suficientemente detalhado para orientar um time a construir o sistema.
+
+ESTRUTURA OBRIGATÓRIA DO CARD
+Título: <nome do projeto + objetivo em 8–14 palavras>
+
+Descrição:
+🧩 Visão Geral
+- Explique o propósito do sistema, o problema que resolve e para quem.
+- Contexto operacional (quando aplicável: CBMMG, unidades, integrações, etc.).
+
+🎯 Objetivos e Resultados Esperados
+- Liste 3 a 7 resultados mensuráveis (ex: reduzir tempo, centralizar dados, auditoria, transparência, etc.).
+
+👥 Perfis de Usuário e Permissões
+- Defina perfis (ex: admin, gestor, operador, auditor, API client).
+- Regras de acesso (RBAC) e trilha de auditoria.
+
+📦 Escopo Funcional (MVP)
+- Liste funcionalidades mínimas em bullets, bem específicas.
+- Inclua entradas/saídas, telas e fluxos principais.
+- Se houver dados externos, descreva como entram.
+
+🧱 Requisitos Não Funcionais
+- Segurança (JWT/OAuth, rate-limit, logs, LGPD quando aplicável)
+- Performance (metas de tempo de resposta, volume esperado)
+- Disponibilidade/Resiliência (retry, fila, fallback)
+- Observabilidade (logs, métricas, alertas)
+
+🛠️ Arquitetura Proposta
+- Componentes: frontend, backend, banco, integrações, filas/cache se necessário.
+- Padrões: REST, Webhook, Worker, Scheduler, etc.
+- Ambientes: dev/homolog/prod e diferenças (ex: SQLite dev vs Postgres prod).
+
+🗃️ Modelo de Dados (alto nível)
+- Entidades principais (ex: Usuario, Permissao, Evento, Registro, etc.)
+- Relacionamentos e chaves relevantes.
+
+🔌 Integrações e Dependências
+- Sistemas externos, autenticação, chaves, whitelists de IP, etc.
+- O que é bloqueador se faltar (credenciais, tabelas auxiliares, acesso).
+
+🔒 Segurança e Conformidade
+- Controles mínimos: criptografia em trânsito, segredo em vault/.env, auditoria.
+- Proteções: throttling, bloqueio por IP, validação de payload, etc.
+
+✅ Critérios de Aceite
+- 6 a 10 critérios objetivos (Given/When/Then ou bullets verificáveis).
+
+🧪 Plano de Testes (mínimo)
+- Unitários, integração, E2E (se houver UI), carga (se aplicável).
+
+🚀 Próximos Passos (Backlog sugerido)
+- 5 a 10 itens priorizados (MVP → evolução).
+
+ENTRADA
+{validated_request.card_description}
+
+SAÍDA
+Gere APENAS o card no formato definido, sem comentários extras, sem saudações, sem perguntas.
+"""
+            
+            print("\n=== DEBUG: Chamando OpenAI API ===")
+            print(f"Modelo: gpt-3.5-turbo-0125")
+            
+            # Gerar descrição formatada usando OpenAI
+            mensagens = [
+                {"role": "user", "content": prompt_descricao}
+            ]
+            
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=mensagens,
+                max_tokens=2000,
+                temperature=0.7
+            )
+            
+            card_content = response.choices[0].message.content
+            print("\n=== DEBUG: Resposta da OpenAI recebida ===")
+            print(f"Tamanho da resposta: {len(card_content)} caracteres")
+            print(f"Primeiros 200 chars: {card_content[:200]}...")
+            
+            # Extrair título e descrição separados
+            card_desc = card_content
+            
+            # Se auto_title estiver ativo, extrair o título da resposta da IA
+            if validated_request.auto_title:
+                print("\n=== DEBUG: auto_title está ATIVO, extraindo título ===")
+                lines = card_content.split('\n')
+                for i, line in enumerate(lines):
+                    if line.startswith('Título:'):
+                        card_title = line.replace('Título:', '').strip()
+                        print(f"DEBUG: Título extraído: {card_title}")
+                        # Remover linha do título da descrição
+                        card_desc = '\n'.join(lines[i+1:]).strip()
+                        if card_desc.startswith('Descrição:'):
+                            card_desc = card_desc.replace('Descrição:', '', 1).strip()
+                        break
+            
+            print(f"\n=== DEBUG: Título final: {card_title} ===")
+            print(f"=== DEBUG: Descrição final (primeiros 200 chars): {card_desc[:200]}... ===")
+        else:
+            print("\n=== DEBUG: use_ai está DESATIVADO, usando texto original ===")
+        
+        print(f"\n=== DEBUG: Título que será enviado ao Trello: {card_title} ===")
+        print(f"=== DEBUG: Descrição que será enviada (primeiros 200 chars): {card_desc[:200] if len(card_desc) > 200 else card_desc} ===")
+
+        
+        # ============= INTEGRAÇÃO COM TRELLO =============
+        
+        # 1. Buscar board pelo nome
+        boards_url = f"{TRELLO_BASE_URL}/members/me/boards"
+        boards_response = requests.get(boards_url, params={**get_trello_auth(), 'fields': 'name,id'})
+        boards = boards_response.json()
+        
+        board_id = None
+        for board in boards:
+            if board['name'].lower() == validated_request.board_name.lower():
+                board_id = board['id']
+                break
+        
+        if not board_id:
+            return {"success": False, "error": f"Board '{validated_request.board_name}' não encontrado"}
+        
+        # 2. Buscar lista pelo nome
+        lists_url = f"{TRELLO_BASE_URL}/boards/{board_id}/lists"
+        lists_response = requests.get(lists_url, params={**get_trello_auth(), 'fields': 'name,id'})
+        lists = lists_response.json()
+        
+        list_id = None
+        for lst in lists:
+            if lst['name'].lower() == validated_request.list_name.lower():
+                list_id = lst['id']
+                break
+        
+        if not list_id:
+            return {"success": False, "error": f"Lista '{validated_request.list_name}' não encontrada no board"}
+        
+        # 3. Buscar ou criar label
+        labels_url = f"{TRELLO_BASE_URL}/boards/{board_id}/labels"
+        labels_response = requests.get(labels_url, params=get_trello_auth())
+        labels = labels_response.json()
+        
+        label_id = None
+        for label in labels:
+            if label.get('name', '').lower() == validated_request.label_name.lower():
+                label_id = label['id']
+                break
+        
+        # Se label não existe, criar um novo
+        if not label_id:
+            create_label_url = f"{TRELLO_BASE_URL}/labels"
+            label_params = {
+                **get_trello_auth(),
+                'name': validated_request.label_name,
+                'color': validated_request.label_color,
+                'idBoard': board_id
+            }
+            label_response = requests.post(create_label_url, params=label_params)
+            if label_response.status_code == 200:
+                label_id = label_response.json()['id']
+        
+        # 4. Criar o card
+        card_url = f"{TRELLO_BASE_URL}/cards"
+        card_params = {
+            **get_trello_auth(),
+            'idList': list_id,
+            'name': card_title,
+            'desc': card_desc,
+            'pos': 'top'
+        }
+        
+        print(f"\n=== DEBUG: Criando card no Trello ===")
+        print(f"URL: {card_url}")
+        print(f"Nome do card: {card_title}")
+        print(f"Descrição (primeiros 200 chars): {card_desc[:200] if len(card_desc) > 200 else card_desc}")
+        
+        # Adicionar label se encontrado/criado
+        if label_id:
+            card_params['idLabels'] = label_id
+            print(f"DEBUG: Label ID adicionado: {label_id}")
+        
+        # Adicionar data de vencimento se fornecida
+        if validated_request.due_date:
+            card_params['due'] = validated_request.due_date
+            print(f"DEBUG: Data de vencimento: {validated_request.due_date}")
+        
+        card_response = requests.post(card_url, params=card_params)
+        print(f"\n=== DEBUG: Status da resposta do Trello: {card_response.status_code} ===")
+
+        
+        if card_response.status_code == 200:
+            created_card = card_response.json()
+            print(f"\n=== DEBUG: Card criado com SUCESSO! ===")
+            print(f"Card ID: {created_card['id']}")
+            print(f"Card URL: {created_card['url']}")
+            return {
+                "success": True,
+                "message": "Card criado com sucesso!",
+                "card_title": card_title,
+                "card_id": created_card['id'],
+                "card_url": created_card['url']
+            }
+        else:
+            print(f"\n=== DEBUG: ERRO ao criar card ===")
+            print(f"Status: {card_response.status_code}")
+            print(f"Resposta: {card_response.text}")
+            return {
+                "success": False,
+                "error": f"Erro ao criar card: {card_response.text}"
+            }
+        
+    except Exception as e:
+        import traceback
+        print(f"\n=== DEBUG: EXCEÇÃO capturada ===")
+        print(f"Erro: {str(e)}")
+        print(f"Traceback completo:")
+        traceback.print_exc()
+        return {
+            "success": False,
+            "error": f"Erro ao criar card: {str(e)}"
+        }
     
     
 if __name__ == "__main__":
